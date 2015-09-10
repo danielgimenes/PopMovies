@@ -1,6 +1,7 @@
 package trendingmovies.dgimenes.com.br.trendingmovies;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -18,9 +19,10 @@ import java.util.List;
 
 public class MainActivityFragment extends Fragment {
 
-    private static String MovieDB_API_KEY = "a75ccb1adc464aeef37492238c1165c9";
+    private static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
+    private static String MovieDB_API_KEY = ""; // get yours at https://www.themoviedb.org/
     private static String movieDBBaseUrl = "http://image.tmdb.org/t/p/";
-    private static String movieDBposterSize = "w185";
+    private static String movieDBposterSize = "w342";
 
     public MainActivityFragment() {
     }
@@ -57,8 +59,13 @@ public class MainActivityFragment extends Fragment {
 
             if (posterUrl != null) {
                 ImageView posterImageView = (ImageView) itemView.findViewById(R.id.posterImageView);
-                String imageUrl = movieDBBaseUrl + movieDBposterSize + posterUrl + "?api_key=" + MovieDB_API_KEY;
-                Picasso.with(getContext()).load(imageUrl).into(posterImageView);
+                Uri imageUrl = Uri.parse(movieDBBaseUrl)
+                        .buildUpon()
+                        .appendEncodedPath(movieDBposterSize)
+                        .appendEncodedPath(posterUrl)
+                        .appendQueryParameter("api_key", MovieDB_API_KEY)
+                        .build();
+                Picasso.with(getContext()).load(imageUrl.toString()).into(posterImageView);
             }
 
             return itemView;
