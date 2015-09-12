@@ -130,7 +130,7 @@ public class MainActivityFragment extends Fragment {
                 String sortOrder = params[0];
                 Uri movieListUri = Uri.parse(MovieDB.LISTS_BASE_URL)
                         .buildUpon()
-                        .appendEncodedPath(sortOrder)
+                        .appendQueryParameter(MovieDB.SORT_ORDER_QUERYPARAM, sortOrder)
                         .appendQueryParameter(MovieDB.API_KEY_QUERYPARAM, MovieDB.API_KEY)
                         .build();
 
