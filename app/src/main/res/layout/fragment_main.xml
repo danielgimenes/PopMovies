@@ -5,11 +5,11 @@
     tools:context=".MainActivityFragment">
 
     <GridView
-        android:id="@+id/postersGridView"
+        android:id="@+id/posters_grid_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
         android:numColumns="2"
-        android:stretchMode="columnWidth"
-        android:gravity="center" />
+        android:stretchMode="columnWidth" />
 
 </RelativeLayout>
