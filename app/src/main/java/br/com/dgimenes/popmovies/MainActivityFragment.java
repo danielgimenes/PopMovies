@@ -38,10 +38,6 @@ import br.com.dgimenes.popmovies.model.MovieSummary;
 public class MainActivityFragment extends Fragment {
 
     private static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
-    private static String MovieDB_API_KEY = "a75ccb1adc464aeef37492238c1165c9"; // get yours at https://www.themoviedb.org/
-    private static String movieDBImagesBaseUrl = "http://image.tmdb.org/t/p/";
-    private static String movieDBposterSize = "w342";
-    private static String movieDBListsBaseUrl = "http://api.themoviedb.org/3/movie/";
 
     private ArrayAdapter<MovieSummary> adapter;
 
@@ -87,23 +83,26 @@ public class MainActivityFragment extends Fragment {
 
             if (movieSummary != null) {
                 ImageView posterImageView = (ImageView) itemView.findViewById(R.id.poster_image_view);
-                Uri imageUrl = Uri.parse(movieDBImagesBaseUrl)
+                Uri imageUrl = Uri.parse(MovieDB.IMAGES_BASE_URL)
                         .buildUpon()
-                        .appendEncodedPath(movieDBposterSize)
+                        .appendEncodedPath(MovieDB.POSTER_SIZE)
                         .appendEncodedPath(movieSummary.getPosterUrl())
-                        .appendQueryParameter("api_key", MovieDB_API_KEY)
+                        .appendQueryParameter(MovieDB.API_KEY_QUERYPARAM, MovieDB.API_KEY)
                         .build();
-                Picasso.with(getContext()).load(imageUrl.toString())
-                        .placeholder(new ColorDrawable()).into(posterImageView, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                    }
+                ColorDrawable loadingDrawable =
+                        new ColorDrawable(getResources().getColor(R.color.loading_bg_color, null));
+                Picasso.with(getContext()).load(imageUrl.toString()).placeholder(loadingDrawable)
+                        .into(posterImageView, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                            }
 
-                    @Override
-                    public void onError() {
-                        Log.e(LOG_TAG, "error downloading picture with Picasso");
-                    }
-                });
+                            @Override
+                            public void onError() {
+                                Log.e(LOG_TAG, getResources()
+                                        .getString(R.string.error_downloading_picture));
+                            }
+                        });
                 posterImageView.setTag(R.id.poster_image_view, movieSummary.getId());
                 posterImageView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -129,10 +128,10 @@ public class MainActivityFragment extends Fragment {
 
             try {
                 String sortOrder = params[0];
-                Uri movieListUri = Uri.parse(movieDBListsBaseUrl)
+                Uri movieListUri = Uri.parse(MovieDB.LISTS_BASE_URL)
                         .buildUpon()
                         .appendEncodedPath(sortOrder)
-                        .appendQueryParameter("api_key", MovieDB_API_KEY)
+                        .appendQueryParameter(MovieDB.API_KEY_QUERYPARAM, MovieDB.API_KEY)
                         .build();
 
                 URL movieListUrl = new URL(movieListUri.toString());
