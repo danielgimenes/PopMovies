@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -64,7 +65,9 @@ public class MainActivityFragment extends Fragment {
     }
 
     private void loadPosters() {
-        new FetchMoviePosterTask().execute();
+        String sortOrder = PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(
+                getString(R.string.pref_sort_order_key), getString(R.string.pref_sort_order_default));
+        new FetchMoviePosterTask().execute(sortOrder);
     }
 
     public class MoviePosterAdapter extends ArrayAdapter<MovieSummary> {
@@ -117,18 +120,18 @@ public class MainActivityFragment extends Fragment {
         }
     }
 
-    private class FetchMoviePosterTask extends AsyncTask<Void, Void, List<MovieSummary>> {
+    private class FetchMoviePosterTask extends AsyncTask<String, Void, List<MovieSummary>> {
 
         @Override
-        protected List<MovieSummary> doInBackground(Void... params) {
+        protected List<MovieSummary> doInBackground(String... params) {
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
             try {
-                String movieListName = "top_rated";
+                String sortOrder = params[0];
                 Uri movieListUri = Uri.parse(movieDBListsBaseUrl)
                         .buildUpon()
-                        .appendEncodedPath(movieListName)
+                        .appendEncodedPath(sortOrder)
                         .appendQueryParameter("api_key", MovieDB_API_KEY)
                         .build();
 
