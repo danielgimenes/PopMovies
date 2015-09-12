@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -89,8 +90,8 @@ public class MainActivityFragment extends Fragment {
                         .appendEncodedPath(movieSummary.getPosterUrl())
                         .appendQueryParameter(MovieDB.API_KEY_QUERYPARAM, MovieDB.API_KEY)
                         .build();
-                ColorDrawable loadingDrawable =
-                        new ColorDrawable(getResources().getColor(R.color.loading_bg_color, null));
+                ColorDrawable loadingDrawable = new ColorDrawable(
+                        ContextCompat.getColor(getActivity(), R.color.loading_bg_color));
                 Picasso.with(getContext()).load(imageUrl.toString()).placeholder(loadingDrawable)
                         .into(posterImageView, new Callback() {
                             @Override
@@ -109,7 +110,7 @@ public class MainActivityFragment extends Fragment {
                     public void onClick(View v) {
                         String movieId = (String) v.getTag(R.id.poster_image_view);
                         Intent detailsActivityIntent = new Intent(
-                                MainActivityFragment.this.getActivity(), DetailsActivity.class);
+                                getActivity(), DetailsActivity.class);
                         detailsActivityIntent.putExtra(DetailsActivity.MOVIE_ID_PARAM, movieId);
                         startActivity(detailsActivityIntent);
                     }
@@ -196,7 +197,7 @@ public class MainActivityFragment extends Fragment {
         @Override
         protected void onPostExecute(List<MovieSummary> movieSummaries) {
             if (movieSummaries == null) {
-                Toast.makeText(MainActivityFragment.this.getActivity(),
+                Toast.makeText(getActivity(),
                         getResources().getString(R.string.error_downloading_movie_list),
                         Toast.LENGTH_SHORT).show();
                 return;

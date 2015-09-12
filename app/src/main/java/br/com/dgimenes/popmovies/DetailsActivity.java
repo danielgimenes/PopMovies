@@ -4,6 +4,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -160,8 +161,8 @@ public class DetailsActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
                 return;
             }
-            ColorDrawable loadingDrawable =
-                    new ColorDrawable(getResources().getColor(R.color.loading_bg_color, null));
+            ColorDrawable loadingDrawable = new ColorDrawable(
+                    ContextCompat.getColor(DetailsActivity.this, R.color.loading_bg_color));
             Picasso.with(DetailsActivity.this).load(movie.getPosterUrl())
                     .placeholder(loadingDrawable)
                     .into(posterImageView, new Callback() {
