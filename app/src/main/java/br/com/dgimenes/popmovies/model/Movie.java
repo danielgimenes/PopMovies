@@ -45,11 +45,8 @@ public class Movie {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Movie movie = (Movie) o;
-
         return !(id != null ? !id.equals(movie.id) : movie.id != null);
-
     }
 
     @Override

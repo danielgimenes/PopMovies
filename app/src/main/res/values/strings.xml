@@ -7,7 +7,9 @@
     <string name="pref_sort_order_title">Sort Order</string>
     <string name="pref_sort_order_highest_rated_label">Highest Rated</string>
     <string name="pref_sort_order_most_popular_label">Most Popular</string>
-    <string name="title_activity_details">DetailsActivity</string>
+    <string name="title_activity_details"></string>
     <string name="pref_sort_order_default">@string/pref_sort_order_highest_rated_label</string>
     <string name="error_downloading_picture">Error downloading picture</string>
+    <string name="error_downloading_movie_data">Error downloading movie data :(</string>
+    <string name="error_downloading_movie_list">Error downloading movie list :(</string>
 </resources>

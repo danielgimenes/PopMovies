@@ -1,6 +1,7 @@
 package br.com.dgimenes.popmovies;
 
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,16 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import br.com.dgimenes.popmovies.model.Movie;
 
@@ -64,17 +75,88 @@ public class DetailsActivity extends AppCompatActivity {
     private class FetchMovieDataTask extends AsyncTask<String, Void, Movie> {
         @Override
         protected Movie doInBackground(String[] params) {
-            Movie movie = new Movie("id", "originalTitle", "rating", "synopsis",
-                    "http://image.tmdb.org/t/p/w342/yRXTVpDRBA3983C3HjoY0SO4dV6.jpg" +
-                            "?api_key=a75ccb1adc464aeef37492238c1165c9",
-                    "releaseDate");
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+
+            try {
+                String movieId = params[0];
+                Uri movieUri = Uri.parse(MovieDB.MOVIE_BASE_URL)
+                        .buildUpon()
+                        .appendEncodedPath(movieId)
+                        .appendQueryParameter(MovieDB.API_KEY_QUERYPARAM, MovieDB.API_KEY)
+                        .build();
+
+                URL movieUrl = new URL(movieUri.toString());
+
+                urlConnection = (HttpURLConnection) movieUrl.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream == null) {
+                    Log.e(LOG_TAG, "Error: Stream empty");
+                    return null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    buffer.append(line);
+                }
+
+                if (buffer.length() == 0) {
+                    Log.e(LOG_TAG, "Error: Stream empty");
+                    return null;
+                }
+                String movieJsonStr = buffer.toString();
+
+                return getMovieFromJsonStr(movieJsonStr);
+
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Error fetching data", e);
+                return null;
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, "Error parsing JSON", e);
+                return null;
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                        return null;
+                    }
+                }
+            }
+        }
+
+        private Movie getMovieFromJsonStr(String movieJsonStr) throws JSONException {
+            JSONObject movieJsonObject = new JSONObject(movieJsonStr);
+            Uri posterUri = Uri.parse(MovieDB.IMAGES_BASE_URL)
+                    .buildUpon()
+                    .appendEncodedPath(MovieDB.POSTER_SIZE)
+                    .appendEncodedPath(movieJsonObject.getString("poster_path"))
+                    .appendQueryParameter(MovieDB.API_KEY_QUERYPARAM, MovieDB.API_KEY)
+                    .build();
+            Movie movie = new Movie(movieJsonObject.getString("id"),
+                    movieJsonObject.getString("original_title"),
+                    movieJsonObject.getString("vote_average"),
+                    movieJsonObject.getString("overview"),
+                    posterUri.toString(),
+                    movieJsonObject.getString("release_date")
+            );
             return movie;
         }
 
         @Override
         protected void onPostExecute(Movie movie) {
             if (movie == null) {
-                Toast.makeText(DetailsActivity.this, "Error downloading movie data :(",
+                Toast.makeText(DetailsActivity.this,
+                        getResources().getString(R.string.error_downloading_movie_data),
                         Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -95,7 +177,7 @@ public class DetailsActivity extends AppCompatActivity {
                     });
             originalTitleTextView.setText(movie.getOriginalTitle());
             releaseDateTextView.setText(movie.getReleaseDate());
-            userRatingTextView.setText(movie.getId());
+            userRatingTextView.setText(movie.getRating());
             synopsisTextView.setText(movie.getSynopsis());
         }
     }

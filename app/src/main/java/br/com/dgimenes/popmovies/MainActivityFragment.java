@@ -176,6 +176,7 @@ public class MainActivityFragment extends Fragment {
                         reader.close();
                     } catch (final IOException e) {
                         Log.e(LOG_TAG, "Error closing stream", e);
+                        return null;
                     }
                 }
             }
@@ -196,7 +197,8 @@ public class MainActivityFragment extends Fragment {
         protected void onPostExecute(List<MovieSummary> movieSummaries) {
             if (movieSummaries == null) {
                 Toast.makeText(MainActivityFragment.this.getActivity(),
-                        "Error downloading movie list :(", Toast.LENGTH_SHORT).show();
+                        getResources().getString(R.string.error_downloading_movie_list),
+                        Toast.LENGTH_SHORT).show();
                 return;
             }
             adapter.clear();
