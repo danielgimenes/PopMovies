@@ -1,9 +1,10 @@
 package br.com.dgimenes.popmovies;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -13,6 +14,9 @@ public class DetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
+        String movieId = getIntent().getExtras().getString(MOVIE_ID_PARAM);
+        TextView movieIdTextView = (TextView) findViewById(R.id.movie_id_text_view);
+        movieIdTextView.setText(movieId);
     }
 
     @Override

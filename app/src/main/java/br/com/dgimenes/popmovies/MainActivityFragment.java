@@ -64,13 +64,10 @@ public class MainActivityFragment extends Fragment {
     }
 
     private void loadPosters() {
-        Log.v(LOG_TAG, "loadPosters");
         new FetchMoviePosterTask().execute();
     }
 
     public class MoviePosterAdapter extends ArrayAdapter<MovieSummary> {
-
-        private static final int MOVIE_ID_TAG_KEY = 123;
 
         public MoviePosterAdapter(Context context) {
             super(context, R.layout.movie_poster);
@@ -78,7 +75,6 @@ public class MainActivityFragment extends Fragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            Log.v(LOG_TAG, "getView " + Integer.valueOf(position).toString());
             View itemView = convertView;
             if (itemView == null) {
                 itemView = LayoutInflater.from(getContext()).inflate(R.layout.movie_poster, null);
@@ -98,7 +94,6 @@ public class MainActivityFragment extends Fragment {
                         .placeholder(new ColorDrawable()).into(posterImageView, new Callback() {
                     @Override
                     public void onSuccess() {
-                        Log.v(LOG_TAG, "Picture downloaded and set");
                     }
 
                     @Override
@@ -110,7 +105,7 @@ public class MainActivityFragment extends Fragment {
                 posterImageView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String movieId = (String) v.getTag(MOVIE_ID_TAG_KEY);
+                        String movieId = (String) v.getTag(R.id.poster_image_view);
                         Intent detailsActivityIntent = new Intent(
                                 MainActivityFragment.this.getActivity(), DetailsActivity.class);
                         detailsActivityIntent.putExtra(DetailsActivity.MOVIE_ID_PARAM, movieId);
@@ -202,7 +197,6 @@ public class MainActivityFragment extends Fragment {
                         "Error downloading movie list :(", Toast.LENGTH_SHORT).show();
                 return;
             }
-            Log.v(LOG_TAG, "movie summaries downloaded, updating adapter");
             adapter.clear();
             adapter.addAll(movieSummaries);
         }

@@ -9,8 +9,8 @@
     tools:context="br.com.dgimenes.popmovies.DetailsActivityFragment">
 
     <TextView
+        android:id="@+id/movie_id_text_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Movie Details" />
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>
